@@ -10,10 +10,16 @@
 <body>
 
 	<!-- Text with spanID that gets filled with content -->
-	<h1>Ouch! You've clicked me <span id="clickValue"></span> times!</h1>
+	<h1>Ouch! You've clicked me <span id="clickValueR"></span> times!</h1>
 
 	<!-- Button -->
-	<button id="clickButton">Click Me!!!!</button>
+	<button id="clickButtonR">Trump!!!!</button>
+
+		<!-- Text with spanID that gets filled with content -->
+	<h1>Ouch! You've clicked me <span id="clickValueL"></span> times!</h1>
+
+	<!-- Button -->
+	<button id="clickButtonL">Clinton!!!!</button>
 
 
 	<!-- JQuery -->
@@ -41,25 +47,44 @@
 	// Get a reference to the database service
 	var database = firebase.database();
 
+
 	// Setting initial value of our click counter variable to 0
-	var clickCounter = 0;	
-	
+	var clickCounterR = 0;	
+		// Setting initial value of our click counter variable to 0
+	var clickCounterL = 0;	
 
 	// FUNCTIONS + EVENTS
 	// --------------------------------------------------------------------------------
 
 	// On Click of Button
-	$("#clickButton").on("click", function() {
+	$("#clickButtonR").on("click", function() {
 
 		// Add to clickCounter
-		clickCounter++;
+		clickCounterR++;
 
 		// ***** Store Click Data to Firebase in a JSON property called clickCount *****
 		// Note how we are using the Firebase .set() method 
-		database.ref().set({
-			clickCount: clickCounter
+		database.ref().update({		
+			// raceR : {		
+			clickCountR: clickCounterR
+			// }
 		});
-	})
+	});
+
+	// On Click of Button
+	$("#clickButtonL").on("click", function() {
+
+		// Add to clickCounter
+		clickCounterL++;
+
+		// ***** Store Click Data to Firebase in a JSON property called clickCount *****
+		// Note how we are using the Firebase .set() method 
+		database.ref().update({
+			// raceL : {
+				clickCountL: clickCounterL
+			// }
+		});
+	});
 
 	// MAIN PROCESS + INITIAL CODE
 	// --------------------------------------------------------------------------------
@@ -72,10 +97,32 @@
 		console.log(snapshot.val());
 
 		// Then we change the html associated with the number.
-		$("#clickValue").html(snapshot.val().clickCount);
+		$("#clickValueR").html(snapshot.val().clickCountR);
 
 		// Then update the clickCounter variable with data from the database. 
-		clickCounter = snapshot.val().clickCount;
+		clickCounterR = snapshot.val().clickCountR;
+
+	// If there is an error that Firebase runs into -- it will be stored in the "errorObject"
+	// Again we could have named errorObject anything we wanted. 
+	}, function (errorObject) {
+
+		// In case of error this will print the error
+	  	console.log("The read failed: " + errorObject.code);
+	
+	});
+
+		// **** Using .on("value", function(snapshot)) syntax will retrieve the data from the database (both initially and everytime something changes)
+	// This will then store the data inside the variable "snapshot". We could rename "snapshot" to anything.
+	database.ref().on("value", function(snapshot) {
+
+		// Then we console.log the value of snapshot
+		console.log(snapshot.val());
+
+		// Then we change the html associated with the number.
+		$("#clickValueL").html(snapshot.val().clickCountL);
+
+		// Then update the clickCounter variable with data from the database. 
+		clickCounterL = snapshot.val().clickCountL;
 
 	// If there is an error that Firebase runs into -- it will be stored in the "errorObject"
 	// Again we could have named errorObject anything we wanted. 
